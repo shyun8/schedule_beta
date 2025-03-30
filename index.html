@@ -23,7 +23,6 @@
             padding: 20px;
         }
 
-        /* Week Indicator and Navigation Arrows */
         .week-indicator {
             text-align: center;
             font-size: 1.4em;
@@ -52,7 +51,6 @@
             background-color: #218838; /* Darker green on hover */
         }
 
-        /* Overview Section (Category Summary) */
         .overview {
             background-color: #f9f9f9; /* Lighter color for the overview box */
             border-radius: 10px;
@@ -93,7 +91,6 @@
             color: #28a745; /* Green color for the counts */
         }
 
-        /* Week Event Number and Week Change Info */
         .week-info {
             font-size: 1.1em;
             color: #808080; /* Grey color */
@@ -107,7 +104,6 @@
             color: #28a745; /* Green color for the numbers */
         }
 
-        /* Event List Styles */
         .event-list {
             margin-top: 30px;
         }
@@ -134,24 +130,28 @@
         }
 
         .event-category {
-            font-size: 1em; /* Set to 1em as requested */
-            color: #808080; /* Grey color for categories */
-            font-weight: 600; /* Make it bolder */
+            font-size: 1em;
+            color: #808080;
+            font-weight: 600;
             margin-bottom: 10px;
         }
 
         .event-time {
-            font-size: 1em; /* Set to 1em as requested */
+            font-size: 1em;
             color: #333;
             margin-bottom: 10px;
         }
 
         .event-countdown {
-            font-size: 1em; /* Set to 1em as requested */
-            color: #28a745; /* Green color for countdown */
+            font-size: 1em;
+            color: #28a745;
         }
 
-        /* Yellow-White Banner Styles */
+        .event-preparation-time {
+            font-size: 1em;
+            color: #f39c12; /* Yellow color for preparation time */
+        }
+
         .info-banner {
             background: linear-gradient(135deg, #FFEB3B, #FFF59D); /* Yellow to White gradient */
             color: #333;
@@ -171,10 +171,9 @@
 
         .info-banner a {
             text-decoration: underline;
-            color: #28a745; /* Green color for the link */
+            color: #28a745;
         }
 
-        /* Modal Style */
         .modal {
             display: none;
             position: fixed;
@@ -208,7 +207,7 @@
         }
 
         .modal-content a {
-            color: #1e90ff; /* Blue color for the link */
+            color: #1e90ff;
             text-decoration: none;
         }
 
@@ -223,13 +222,6 @@
             top: 10px;
             right: 10px;
             color: #333;
-        }
-
-        /* Preparation Time */
-        .prep-time {
-            font-size: 1em;
-            color: #FF9800; /* Orange color for preparation time */
-            font-weight: bold;
         }
     </style>
 </head>
@@ -256,7 +248,7 @@
         <div class="week-indicator">
             <span id="week-range">3월 24일 ~ 30일</span>
         </div>
-        
+
         <div class="arrow-buttons">
             <button id="prev-week" onclick="changeWeek(-1)">◀</button>
             <button id="next-week" onclick="changeWeek(1)">▶</button>
@@ -285,66 +277,121 @@
         </div>
 
         <!-- Event List -->
-        <div class="event-list">
-            <div class="event-item">
-                <div class="event-title">수학 수행평가</div>
-                <div class="event-category">수행평가</div>
-                <div class="event-time">2025-03-30 09:00</div>
-                <div class="event-countdown">
-                    남은 준비 가능 시간: <span class="prep-time" id="prep-time">10시간 30분</span>
-                </div>
-            </div>
+        <div class="event-list" id="event-list">
+            <!-- Events will be dynamically inserted here -->
         </div>
     </div>
 
     <script>
-        // School hours configuration
-        const schoolHours = {
-            monday: { start: 8 * 60 + 30, end: 16 * 60 + 30 },
-            tuesday: { start: 8 * 60 + 30, end: 16 * 60 + 30 },
-            wednesday: { start: 8 * 60 + 30, end: 15 * 60 + 30 },
-            thursday: { start: 8 * 60 + 30, end: 16 * 60 + 30 },
-            friday: { start: 8 * 60 + 30, end: 15 * 60 + 30 }
-        };
+        let eventIntervals = []; // Array to store intervals
 
-        // Get the current day of the week
-        const getDayOfWeek = () => new Date().getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+        // Event data with real examples
+        const eventsData = [
+            {
+                week: "3월 24일 ~ 30일",
+                events: [
+                    { title: '전국연합학력평가', category: '학교 일정', time: '2025-03-26T08:40:00' },
+                    { title: '고전문학 재구성 수행평가 1차시', category: '수행평가', time: '2025-03-27T09:40:00' }
+                ]
+            },
+            {
+                week: "3월 31일 ~ 4월 6일",
+                events: [
+                    { title: '고전문학 재구성 수행평가 2차시', category: '수행평가', time: '2025-04-03T09:40:00' }
+                ]
+            },
+            {
+                week: "4월 7일 ~ 13일",
+                events: [
+                    { title: '고전문학 재구성 수행평가 3차시', category: '수행평가', time: '2025-04-10T09:40:00' }
+                ]
+            },
+            {
+                week: "4월 14일 ~ 20일",
+                events: [
+                    { title: '일본어 가나 쓰기 수행평가', category: '수행평가', time: '2025-04-14T11:40:00' },
+                    { title: '일본어 보고서 수행평가 1회차', category: '수행평가', time: '2025-04-17T11:40:00' }
+                ]
+            },
+            {
+                week: "4월 21일 ~ 27일",
+                events: [
+                    { title: '일본어 보고서 수행평가 2회차', category: '수행평가', time: '2025-04-24T11:40:00' }
+                ]
+            }
+        ];
 
-        // Function to calculate available preparation time
-        const calculateAvailablePreparationTime = (eventTime) => {
-            const now = new Date();
+        // Function to format time
+        function formatTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // Function to get the remaining time and preparation time
+        function calculateRemainingTime(eventTime, category) {
             const eventDate = new Date(eventTime);
-            const remainingTimeMs = eventDate - now;
-            const remainingTimeMinutes = Math.floor(remainingTimeMs / (1000 * 60)); // Convert to minutes
+            const currentDate = new Date();
+            const remainingMilliseconds = eventDate - currentDate;
+            const remainingMinutes = Math.floor(remainingMilliseconds / (1000 * 60));
+            const remainingHours = Math.floor(remainingMinutes / 60);
+            const remainingTime = `${remainingHours}시간 ${remainingMinutes % 60}분`;
 
-            let schoolTime = 0;
-            const currentDay = getDayOfWeek();
-            
-            // Loop through remaining time and subtract school hours
-            let totalMinutesAvailable = remainingTimeMinutes;
+            let preparationTime = 0;
 
-            for (let day = currentDay; day <= 6; day++) {
-                if (schoolHours[day]) {
-                    const schoolStart = schoolHours[day].start;
-                    const schoolEnd = schoolHours[day].end;
-                    const startOfDay = 8 * 60 + 30; // School starts at 08:30
-                    const endOfDay = 16 * 60 + 30; // School ends at 16:30 (Mon, Tues, Thurs) or 15:30 (Wed, Fri)
-
-                    if (remainingTimeMinutes > schoolEnd) {
-                        totalMinutesAvailable -= (schoolEnd - schoolStart); // Subtracting school time
-                    }
-                }
+            // Determine if event is in "수행평가" category and if less than 24 hours remaining
+            if (remainingMilliseconds < 24 * 60 * 60 * 1000 && category === '수행평가') {
+                const schoolTime = calculateSchoolTime(eventDate);
+                preparationTime = remainingMilliseconds - schoolTime;
+                preparationTime = `${Math.floor(preparationTime / (1000 * 60 * 60))}시간 ${Math.floor((preparationTime % (1000 * 60 * 60)) / (1000 * 60))}분`;
             }
 
-            const hours = Math.floor(totalMinutesAvailable / 60);
-            const minutes = totalMinutesAvailable % 60;
+            return { remainingTime, preparationTime };
+        }
 
-            return `${hours}시간 ${minutes}분`;
-        };
+        // Function to calculate the school time during the event
+        function calculateSchoolTime(eventDate) {
+            const dayOfWeek = eventDate.getDay();  // 0: Sunday, 1: Monday, etc.
+            const schoolStartTime = {
+                1: { start: '08:30', end: '16:30' },
+                2: { start: '08:30', end: '16:30' },
+                3: { start: '08:30', end: '16:30' },
+                4: { start: '08:30', end: '15:30' },
+                5: { start: '08:30', end: '15:30' }
+            };
 
-        // Example usage to show remaining preparation time
-        const eventTime = "2025-03-30T09:00:00"; // Example event time
-        document.getElementById("prep-time").innerText = calculateAvailablePreparationTime(eventTime);
+            const startTime = new Date(`2025-03-01T${schoolStartTime[dayOfWeek].start}:00`);
+            const endTime = new Date(`2025-03-01T${schoolStartTime[dayOfWeek].end}:00`);
+
+            return endTime - startTime; // Returns the duration of school time in milliseconds
+        }
+
+        // Function to display events with remaining and preparation time
+        function displayEvents(events) {
+            const eventList = document.getElementById("event-list");
+            eventList.innerHTML = '';
+
+            events.forEach(event => {
+                const { remainingTime, preparationTime } = calculateRemainingTime(event.time, event.category);
+
+                const eventItem = document.createElement('div');
+                eventItem.classList.add('event-item');
+
+                eventItem.innerHTML = `
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-category">${event.category}</div>
+                    <div class="event-time">시간: ${formatTime(new Date(event.time))}</div>
+                    <div class="event-countdown">남은 시간: ${remainingTime}</div>
+                    ${preparationTime ? `<div class="event-preparation-time">남은 준비 가능 시간: ${preparationTime}</div>` : ''}
+                `;
+
+                eventList.appendChild(eventItem);
+            });
+        }
+
+        // Initialize event display
+        displayEvents(eventsData[0].events);
     </script>
 </body>
 </html>
+
