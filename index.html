@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학교 일정</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+    <style>
+        /* General Styles */
+        body {
+            font-family: "Pretendard Variable", Pretendard, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            font-size: 16px; /* Consistent font size */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Week Indicator and Navigation Arrows */
+        .week-indicator {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .arrow-buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .arrow-buttons button {
+            background-color: #28a745; /* Green color */
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 0 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .arrow-buttons button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        /* Overview Section (Category Summary) */
+        .overview {
+            background-color: #f9f9f9; /* Lighter color for the overview box */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 0px;
+            margin-top: 0;
+        }
+
+        .overview h2 {
+            font-size: 1.5em;
+            color: #333;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 0px;
+        }
+
+        .overview .category-summary {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.0em;
+            color: #333;
+            line-height: 1.2;
+        }
+
+        .category-summary div {
+            display: flex;
+            align-items: center;
+        }
+
+        .category-summary .category-label {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #808080; /* Grey color for category label */
+        }
+
+        .category-summary .category-count {
+            color: #28a745; /* Green color for the counts */
+        }
+
+        /* Week Event Number and Week Change Info */
+        .week-info {
+            font-size: 1.1em;
+            color: #808080; /* Grey color */
+            font-weight: bold;
+            line-height: 1;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .week-info span {
+            color: #28a745; /* Green color for the numbers */
+        }
+
+        /* Event List Styles */
+        .event-list {
+            margin-top: 30px;
+        }
+
+        .event-item {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .event-item:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .event-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .event-category {
+            font-size: 1em; /* Set to 1em as requested */
+            color: #808080; /* Grey color for categories */
+            font-weight: 600; /* Make it bolder */
+            margin-bottom: 10px;
+        }
+
+        .event-time {
+            font-size: 1em; /* Set to 1em as requested */
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .event-countdown {
+            font-size: 1em; /* Set to 1em as requested */
+            color: #28a745; /* Green color for countdown */
+        }
+
+        /* Yellow-White Banner Styles */
+        .info-banner {
+            background: linear-gradient(135deg, #FFEB3B, #FFF59D); /* Yellow to White gradient */
+            color: #333;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .info-banner .info-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .info-banner a {
+            text-decoration: underline;
+            color: #28a745; /* Green color for the link */
+        }
+
+        /* Modal Style */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 70%;
+            max-width: 500px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .modal-content h2 {
+            font-size: 1.5em;
+            margin-bottom: 12px;
+        }
+
+        .modal-content p {
+            font-size: 1.1em;
+            margin-bottom: 0px;
+        }
+
+        .modal-content a {
+            color: #1e90ff; /* Blue color for the link */
+            text-decoration: none;
+        }
+
+        .modal-content a:hover {
+            text-decoration: underline;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 1.5em;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #333;
+        }
+
+        /* Preparation Time */
+        .prep-time {
+            font-size: 1em;
+            color: #FF9800; /* Orange color for preparation time */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Yellow-White Information Banner -->
+        <div class="info-banner">
+            <div class="info-icon">🛠️</div>
+            <div>곧 추가될 기능에 대해 알아보세요! <a href="#" id="show-info">더 알아보기</a></div>
+        </div>
+
+        <!-- Modal to Show Features -->
+        <div id="info-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="close-modal">&times;</span>
+                <h2>추가될 기능 안내</h2>
+                <p><strong>UI 개선 예정:</strong> 화면 디자인이 개선될 예정입니다. (상시 프로젝트)</p>
+                <p><strong>‘남은 준비 가능 시간’ 기능 예정:</strong> 학교에 있는 시간을 제외한 준비 가능 시간을 표시하는 기능을 곧 제공할 예정입니다. (3월 중)</p>
+                <p><strong>새로운 기능 추가 요청은 다음 링크에서 하실 수 있습니다:</strong> <a href="http://bit.ly/4hB6twf" target="_blank">http://bit.ly/4hB6twf</a></p>
+            </div>
+        </div>
+
+        <!-- Week Indicator and Navigation Arrows -->
+        <div class="week-indicator">
+            <span id="week-range">3월 24일 ~ 30일</span>
+        </div>
+        
+        <div class="arrow-buttons">
+            <button id="prev-week" onclick="changeWeek(-1)">◀</button>
+            <button id="next-week" onclick="changeWeek(1)">▶</button>
+        </div>
+
+        <!-- Overview Section: Category Summary -->
+        <div class="overview">
+            <h2>이번 주 요약</h2>
+
+            <!-- Week Event Number and Week Change Info -->
+            <div class="week-info">
+                <p>이번 주 이벤트는 <span id="event-count">5개</span>입니다.</p>
+                <p>지난 주 대비 <span id="event-difference">2개 더 많아요!</span></p>
+            </div>
+
+            <div class="category-summary">
+                <div>
+                    <span class="category-label">학교 행사:</span>
+                    <span id="school-events" class="category-count">4개</span>
+                </div>
+                <div>
+                    <span class="category-label">수행평가:</span>
+                    <span id="assessment-events" class="category-count">5개</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event List -->
+        <div class="event-list">
+            <div class="event-item">
+                <div class="event-title">수학 수행평가</div>
+                <div class="event-category">수행평가</div>
+                <div class="event-time">2025-03-30 09:00</div>
+                <div class="event-countdown">
+                    남은 준비 가능 시간: <span class="prep-time" id="prep-time">10시간 30분</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // School hours configuration
+        const schoolHours = {
+            monday: { start: 8 * 60 + 30, end: 16 * 60 + 30 },
+            tuesday: { start: 8 * 60 + 30, end: 16 * 60 + 30 },
+            wednesday: { start: 8 * 60 + 30, end: 15 * 60 + 30 },
+            thursday: { start: 8 * 60 + 30, end: 16 * 60 + 30 },
+            friday: { start: 8 * 60 + 30, end: 15 * 60 + 30 }
+        };
+
+        // Get the current day of the week
+        const getDayOfWeek = () => new Date().getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+        // Function to calculate available preparation time
+        const calculateAvailablePreparationTime = (eventTime) => {
+            const now = new Date();
+            const eventDate = new Date(eventTime);
+            const remainingTimeMs = eventDate - now;
+            const remainingTimeMinutes = Math.floor(remainingTimeMs / (1000 * 60)); // Convert to minutes
+
+            let schoolTime = 0;
+            const currentDay = getDayOfWeek();
+            
+            // Loop through remaining time and subtract school hours
+            let totalMinutesAvailable = remainingTimeMinutes;
+
+            for (let day = currentDay; day <= 6; day++) {
+                if (schoolHours[day]) {
+                    const schoolStart = schoolHours[day].start;
+                    const schoolEnd = schoolHours[day].end;
+                    const startOfDay = 8 * 60 + 30; // School starts at 08:30
+                    const endOfDay = 16 * 60 + 30; // School ends at 16:30 (Mon, Tues, Thurs) or 15:30 (Wed, Fri)
+
+                    if (remainingTimeMinutes > schoolEnd) {
+                        totalMinutesAvailable -= (schoolEnd - schoolStart); // Subtracting school time
+                    }
+                }
+            }
+
+            const hours = Math.floor(totalMinutesAvailable / 60);
+            const minutes = totalMinutesAvailable % 60;
+
+            return `${hours}시간 ${minutes}분`;
+        };
+
+        // Example usage to show remaining preparation time
+        const eventTime = "2025-03-30T09:00:00"; // Example event time
+        document.getElementById("prep-time").innerText = calculateAvailablePreparationTime(eventTime);
+    </script>
+</body>
+</html>
